@@ -1,122 +1,73 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import React from 'react'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import Layout from './components/Layout'
+import ChatbotWidget from './components/ChatbotWidget'
+import Home from './pages/Home' // Testing which component breaks the app
+import { CartProvider } from './context/CartContext'
+import Login from './pages/Login'
+import Signup from './pages/Signup'
+import MedicinesCatalog from './pages/MedicinesCatalog'
+import MedicineDetail from './pages/MedicineDetail'
+import Cart from './pages/Cart'
+import Checkout from './pages/Checkout'
+import UserDashboard from './pages/UserDashboard'
+import AdminDashboard from './pages/AdminDashboard'
 
-function App() {
-  const [count, setCount] = useState(0)
+/*
+  App routing:
+  - Public pages are wrapped with <Layout> so Navbar/CategoryNav/Footer are present.
+  - Protected route placeholders use simple mock auth checks (replace with real auth).
+  - 404 Not Found route included.
+*/
 
+// Mock auth placeholder (replace with real auth logic)
+const mockAuth = {
+  isAuthenticated: false, // change to true to test protected pages
+  user: { role: 'user' }, // role: 'user' | 'admin'
+}
+
+// Simple protected route wrapper
+function RequireAuth({ children }) {
+  if (!mockAuth.isAuthenticated) {
+    return <Navigate to="/login" replace />
+  }
+  return children
+}
+
+// Simple admin-only wrapper
+function RequireAdmin({ children }) {
+  if (!mockAuth.isAuthenticated || mockAuth.user.role !== 'admin') {
+    return <Navigate to="/" replace />
+  }
+  return children
+}
+
+function NotFound() {
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
+    <Layout>
+      <div className="min-h-[60vh] flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-3xl font-semibold text-slate-800 mb-2">404 — Page Not Found</h1>
+          <p className="text-slate-600 mb-4">The page you tried does not exist.</p>
+          <a href="/" className="px-4 py-2 bg-teal-600 text-white rounded-[10px] hover:bg-teal-700">Go Home</a>
         </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+      </div>
+    </Layout>
   )
 }
 
-export default App
+export default function App() {
+  return (
+    <BrowserRouter>
+      <CartProvider>
+        <Routes>
+          {/* Public routes (wrapped in Layout) */}
+          <Route path="/" element={<Layout><Home /></Layout>} />
+        </Routes>
+
+        {/* Chat widget present globally */}
+        <ChatbotWidget />
+      </CartProvider>
+    </BrowserRouter>
+  )
+}
