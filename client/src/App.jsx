@@ -2,10 +2,15 @@ import React from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import Layout from './components/Layout'
 import ChatbotWidget from './components/ChatbotWidget'
-import Home from './pages/Home' // Testing which component breaks the app
+import Home from './pages/Home'
 import { CartProvider } from './context/CartContext'
-import Login from './pages/Login'
-import Signup from './pages/Signup'
+
+// Import correctly from the components directory where you edited them
+import Login from './components/Login'
+import Signup from './components/Signup'
+import UserProfile from './components/UserProfile'
+
+// Other pages
 import MedicinesCatalog from './pages/MedicinesCatalog'
 import MedicineDetail from './pages/MedicineDetail'
 import Cart from './pages/Cart'
@@ -22,8 +27,8 @@ import AdminDashboard from './pages/AdminDashboard'
 
 // Mock auth placeholder (replace with real auth logic)
 const mockAuth = {
-  isAuthenticated: false, // change to true to test protected pages
-  user: { role: 'user' }, // role: 'user' | 'admin'
+  isAuthenticated: true, // change to true to test protected pages
+  user: { role: 'admin' }, // role: 'user' | 'admin'
 }
 
 // Simple protected route wrapper
@@ -61,8 +66,26 @@ export default function App() {
     <BrowserRouter>
       <CartProvider>
         <Routes>
-          {/* Public routes (wrapped in Layout) */}
+          {/* Public routes */}
           <Route path="/" element={<Layout><Home /></Layout>} />
+          
+          {/* Authentication Routes */}
+          <Route path="/login" element={<Layout><Login /></Layout>} />
+          <Route path="/signup" element={<Layout><Signup /></Layout>} />
+          <Route path="/profile" element={<Layout><UserProfile /></Layout>} />
+
+          {/* E-commerce Routes */}
+          <Route path="/medicines" element={<Layout><MedicinesCatalog /></Layout>} />
+          <Route path="/medicines/:id" element={<Layout><MedicineDetail /></Layout>} />
+          <Route path="/cart" element={<Layout><Cart /></Layout>} />
+          <Route path="/checkout" element={<Layout><Checkout /></Layout>} />
+
+          {/* Protected Routes */}
+          <Route path="/dashboard" element={<RequireAuth><Layout><UserDashboard /></Layout></RequireAuth>} />
+          <Route path="/admin" element={<RequireAdmin><AdminDashboard /></RequireAdmin>} />
+
+          {/* Catch-all 404 */}
+          <Route path="*" element={<NotFound />} />
         </Routes>
 
         {/* Chat widget present globally */}

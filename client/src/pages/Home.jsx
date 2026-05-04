@@ -6,6 +6,7 @@ import {
   ShoppingCart, Star, Upload, Pill, Baby, Apple, Stethoscope,
   Scissors, Heart
 } from 'lucide-react'
+import BlogSection from '../components/BlogSection'
 
 /* ─── Feature bar items ─── */
 const FEATURES = [
@@ -348,6 +349,9 @@ export default function Home() {
           </motion.div>
         </div>
       </section>
+
+      {/* ═══════════════ BLOG SECTION ═══════════════ */}
+      <BlogSection />
     </div>
   )
 }

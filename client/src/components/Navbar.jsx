@@ -3,6 +3,7 @@ import { Link, NavLink } from 'react-router-dom'
 import { Menu, X, Search, ShoppingCart, User, ChevronDown, LogOut } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import SearchComponent from './SearchComponent'
+import CategoryNav from './CategoryNav'
 import { useCart } from '../context/CartContext'
 
 export default function Navbar() {
@@ -13,7 +14,7 @@ export default function Navbar() {
   const isAuthenticated = false
 
   return (
-    <header className="sticky top-0 z-50 bg-white border-b border-gray-100">
+    <header className="sticky top-0 z-[120] bg-white border-b border-gray-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
@@ -126,7 +127,10 @@ export default function Navbar() {
 
             <nav className="px-4 py-2 space-y-1">
               <NavLink to="/" className="block px-4 py-3 rounded-xl text-gray-700 hover:bg-gray-50 font-medium">Home</NavLink>
-              <NavLink to="/medicines" className="block px-4 py-3 rounded-xl text-gray-700 hover:bg-gray-50 font-medium">Medicines</NavLink>
+              
+              {/* Category Mega Menu - Mobile Accordion */}
+              <CategoryNav isMobile={true} />
+
               <NavLink to="/contact" className="block px-4 py-3 rounded-xl text-gray-700 hover:bg-gray-50 font-medium">Contact</NavLink>
               <NavLink to="/about" className="block px-4 py-3 rounded-xl text-gray-700 hover:bg-gray-50 font-medium">About</NavLink>
             </nav>
