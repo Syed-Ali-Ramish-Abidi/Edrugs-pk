@@ -1,0 +1,13 @@
+Paracetamol
+Composition: 500mg.
+Manufacturer: Various
+Form: Tablet
+
+Use: Fever, pain
+
+Side Effects: Liver issues (overdose)
+
+Availability: All cities
+Age Restriction: None
+Prescription Required: No
+Price: 30
