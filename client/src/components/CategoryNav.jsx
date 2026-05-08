@@ -1,6 +1,18 @@
 import React, { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { ChevronDown, ChevronRight } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
+
+// Helper function to generate category links with query params
+const getCatalogLink = (mainCategory, subCategory = null, itemType = null) => {
+  let url = '/medicines';
+  const params = new URLSearchParams();
+  if (mainCategory) params.append('main', mainCategory);
+  if (subCategory) params.append('sub', subCategory);
+  if (itemType) params.append('item', itemType);
+  const queryString = params.toString();
+  return queryString ? `${url}?${queryString}` : url;
+};
 
 export const categoriesData = [
   {
@@ -198,15 +210,22 @@ export default function CategoryNav({ isMobile = false }) {
                 >
                   {cat.subcategories.map((subcat) => (
                     <div key={subcat.name} className="flex flex-col border-b border-gray-100 last:border-none">
-                      <button
-                        onClick={() => setExpandedSubCat(expandedSubCat === subcat.name ? null : subcat.name)}
-                        className="flex items-center justify-between px-4 py-2 text-sm text-gray-600 hover:text-teal-700 w-full text-left focus:outline-none"
-                      >
-                        <span>{subcat.name}</span>
-                        {subcat.subcategories && subcat.subcategories.length > 0 && (
+                      {subcat.subcategories && subcat.subcategories.length > 0 ? (
+                        <button
+                          onClick={() => setExpandedSubCat(expandedSubCat === subcat.name ? null : subcat.name)}
+                          className="flex items-center justify-between px-4 py-2 text-sm text-gray-600 hover:text-teal-700 w-full text-left focus:outline-none"
+                        >
+                          <span>{subcat.name}</span>
                           <ChevronDown size={14} className={`transition-transform duration-200 ${expandedSubCat === subcat.name ? 'rotate-180' : ''}`} />
-                        )}
-                      </button>
+                        </button>
+                      ) : (
+                        <Link
+                          to={getCatalogLink(cat.name, subcat.name)}
+                          className="flex items-center justify-between px-4 py-2 text-sm text-gray-600 hover:text-teal-700 w-full text-left focus:outline-none"
+                        >
+                          <span>{subcat.name}</span>
+                        </Link>
+                      )}
                       <AnimatePresence>
                         {expandedSubCat === subcat.name && subcat.subcategories && subcat.subcategories.length > 0 && (
                           <motion.div
@@ -216,9 +235,13 @@ export default function CategoryNav({ isMobile = false }) {
                             className="overflow-hidden bg-gray-100 rounded-b-xl"
                           >
                             {subcat.subcategories.map((subsubcat) => (
-                              <button key={subsubcat.name} className="w-full text-left block px-6 py-2 text-sm text-gray-500 hover:text-teal-700 focus:outline-none">
+                              <Link
+                                key={subsubcat.name}
+                                to={getCatalogLink(cat.name, subcat.name, subsubcat.name)}
+                                className="w-full text-left block px-6 py-2 text-sm text-gray-500 hover:text-teal-700 focus:outline-none"
+                              >
                                 {subsubcat.name}
-                              </button>
+                              </Link>
                             ))}
                           </motion.div>
                         )}
@@ -256,14 +279,21 @@ export default function CategoryNav({ isMobile = false }) {
                     <ul className="flex flex-col">
                       {cat.subcategories.map((subcat) => (
                         <li key={subcat.name} className="group/sub relative">
-                          <button
-                            className="w-full flex items-center justify-between px-4 py-2 text-sm text-gray-700 hover:bg-teal-600 hover:text-white transition-colors focus:outline-none"
-                          >
-                            <span>{subcat.name}</span>
-                            {subcat.subcategories && subcat.subcategories.length > 0 && (
+                          {subcat.subcategories && subcat.subcategories.length > 0 ? (
+                            <button
+                              className="w-full flex items-center justify-between px-4 py-2 text-sm text-gray-700 hover:bg-teal-600 hover:text-white transition-colors focus:outline-none"
+                            >
+                              <span>{subcat.name}</span>
                               <ChevronRight size={14} className="opacity-70" />
-                            )}
-                          </button>
+                            </button>
+                          ) : (
+                            <Link
+                              to={getCatalogLink(cat.name, subcat.name)}
+                              className="w-full flex items-center justify-between px-4 py-2 text-sm text-gray-700 hover:bg-teal-600 hover:text-white transition-colors focus:outline-none"
+                            >
+                              <span>{subcat.name}</span>
+                            </Link>
+                          )}
 
                           {/* Level 2 Flyout (Right side) */}
                           {subcat.subcategories && subcat.subcategories.length > 0 && (
@@ -271,11 +301,12 @@ export default function CategoryNav({ isMobile = false }) {
                               <ul className="flex flex-col">
                                 {subcat.subcategories.map((subsubcat) => (
                                   <li key={subsubcat.name}>
-                                    <button
+                                    <Link
+                                      to={getCatalogLink(cat.name, subcat.name, subsubcat.name)}
                                       className="w-full text-left block px-4 py-2 text-sm text-gray-700 hover:bg-teal-600 hover:text-white transition-colors focus:outline-none"
                                     >
                                       {subsubcat.name}
-                                    </button>
+                                    </Link>
                                   </li>
                                 ))}
                               </ul>

@@ -1,17 +1,21 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Eye, EyeOff, Mail, Lock, User } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, User, AlertCircle, Loader2 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
+import { supabase } from '../config/supabaseClient';
 
 const Signup = () => {
     const navigate = useNavigate();
     const [showPassword, setShowPassword] = useState(false);
     const [formData, setFormData] = useState({ name: '', email: '', password: '', confirmPassword: '' });
     const [errors, setErrors] = useState({});
+    const [authError, setAuthError] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
 
     // Form Validation Logic
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
+        setAuthError(null);
         let newErrors = {};
         if (formData.name.trim().length < 3) newErrors.name = "Name must be at least 3 characters.";
         if (!formData.email.includes('@')) newErrors.email = "Please enter a valid email address.";
@@ -20,9 +24,36 @@ const Signup = () => {
         setErrors(newErrors);
 
         if (Object.keys(newErrors).length === 0) {
-            console.log("Signup ready for backend!", formData);
-            // Supabase Auth integration will go here
-            navigate('/profile');
+            setIsLoading(true);
+            try {
+                const { data, error: signUpError } = await supabase.auth.signUp({
+                    email: formData.email.trim(),
+                    password: formData.password,
+                });
+
+                if (signUpError) throw signUpError;
+
+                if (data.user) {
+                    const { error: profileError } = await supabase
+                        .from('profiles')
+                        .insert([
+                            {
+                                id: data.user.id,
+                                full_name: formData.name,
+                                email: formData.email,
+                                role: 'user'
+                            }
+                        ]);
+
+                    if (profileError) throw profileError;
+
+                    navigate('/profile');
+                }
+            } catch (err) {
+                setAuthError(err.message);
+            } finally {
+                setIsLoading(false);
+            }
         }
     };
 
@@ -38,6 +69,13 @@ const Signup = () => {
                     <h2 className="text-3xl font-bold text-slate-800">Create Account</h2>
                     <p className="text-slate-600 mt-2">Join Edrugs.pk for authentic healthcare</p>
                 </div>
+
+                {authError && (
+                    <div className="mb-4 bg-red-50 p-3 rounded-[10px] flex items-start gap-2 border border-red-200">
+                        <AlertCircle className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
+                        <span className="text-sm text-red-700">{authError}</span>
+                    </div>
+                )}
 
                 <form onSubmit={handleSubmit} className="space-y-5">
                     {/* Full Name Field */}
@@ -122,9 +160,17 @@ const Signup = () => {
                     {/* Submit Button */}
                     <button
                         type="submit"
-                        className="w-full mt-2 flex justify-center py-2.5 px-4 border border-transparent rounded-[10px] shadow-sm text-sm font-medium text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 transition-colors duration-200"
+                        disabled={isLoading}
+                        className="w-full mt-2 flex justify-center items-center gap-2 py-2.5 px-4 border border-transparent rounded-[10px] shadow-sm text-sm font-medium text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 transition-colors duration-200 disabled:opacity-70 disabled:cursor-not-allowed"
                     >
-                        Create Account
+                        {isLoading ? (
+                            <>
+                                <Loader2 className="w-5 h-5 animate-spin" />
+                                Creating Account...
+                            </>
+                        ) : (
+                            'Create Account'
+                        )}
                     </button>
                 </form>
 
