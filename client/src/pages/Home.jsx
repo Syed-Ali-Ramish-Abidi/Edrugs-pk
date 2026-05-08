@@ -1,10 +1,12 @@
-import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import React, { useState, useEffect } from 'react'
+import { supabase } from '../config/supabaseClient'
+import { useCart } from '../context/CartContext'
+import { Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import toast from 'react-hot-toast'
 import {
   ShieldCheck, Truck, CreditCard, Headphones, ArrowRight,
-  ShoppingCart, Star, Upload, Pill, Baby, Apple, Stethoscope,
-  Scissors, Heart
+  ShoppingCart, Star
 } from 'lucide-react'
 import BlogSection from '../components/BlogSection'
 
@@ -16,28 +18,8 @@ const FEATURES = [
   { title: 'Secure Payment', desc: 'Multiple payment options', icon: CreditCard, color: 'text-teal-600', bg: 'bg-teal-50' },
 ]
 
-/* ─── Shop by Category ─── */
-const CATEGORIES = [
-  { name: 'Medicine', icon: Pill, color: 'text-emerald-600', bg: 'bg-emerald-50' },
-  { name: 'Baby & Mother Care', icon: Baby, color: 'text-orange-500', bg: 'bg-orange-50' },
-  { name: 'Nutritions & Supplements', icon: Heart, color: 'text-teal-600', bg: 'bg-teal-50' },
-  { name: 'Foods & Beverages', icon: Apple, color: 'text-rose-500', bg: 'bg-rose-50' },
-  { name: 'Devices & Support', icon: Stethoscope, color: 'text-blue-600', bg: 'bg-blue-50' },
-  { name: 'Personal Care', icon: Scissors, color: 'text-purple-600', bg: 'bg-purple-50' },
-  { name: 'OTC And Health Need', icon: ShieldCheck, color: 'text-amber-600', bg: 'bg-amber-50' },
-]
-
 /* ─── Featured Products ─── */
-const PRODUCTS = [
-  { id: 1, name: 'Panadol Extra', desc: 'Paracetamol 500mg', price: 120, oldPrice: 150, rating: 4.8 },
-  { id: 2, name: 'Augmentin 625mg', desc: 'Amoxicillin/Clavulanate', price: 450, oldPrice: null, rating: 4.7 },
-  { id: 3, name: 'Centrum Silver', desc: 'Multivitamin', price: 2200, oldPrice: 2500, rating: 4.9 },
-  { id: 4, name: 'Ensure Powder', desc: 'Nutritional Supplement', price: 3500, oldPrice: null, rating: 4.6 },
-  { id: 5, name: 'Omeprazole 20mg', desc: 'Proton Pump Inhibitor', price: 180, oldPrice: 220, rating: 4.5 },
-  { id: 6, name: 'Glucophage 500mg', desc: 'Metformin', price: 250, oldPrice: null, rating: 4.7 },
-  { id: 7, name: 'Calpol Syrup', desc: 'Paracetamol 120mg/5ml', price: 95, oldPrice: null, rating: 4.8 },
-  { id: 8, name: 'Vitamin D3 1000IU', desc: 'Cholecalciferol', price: 650, oldPrice: 800, rating: 4.9 },
-]
+// Replaced with dynamic fetch from Supabase
 
 /* ─── Pill SVG illustration for product cards ─── */
 function PillIllustration() {
@@ -71,11 +53,35 @@ const itemVariants = {
 }
 
 export default function Home() {
+  const navigate = useNavigate()
   const [addedMap, setAddedMap] = useState({})
+  const [featuredMedicines, setFeaturedMedicines] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [localSearch, setLocalSearch] = useState('');
 
-  function handleAddToCart(id) {
-    setAddedMap((s) => ({ ...s, [id]: true }))
-    setTimeout(() => setAddedMap((s) => ({ ...s, [id]: false })), 1200)
+  const fetchFeaturedProducts = async () => {
+    try {
+      const { data, error } = await supabase.from('medicines').select('*').limit(8);
+      if (error) throw error;
+      setFeaturedMedicines(data || []);
+    } catch (err) {
+      console.error("Error fetching featured products:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchFeaturedProducts();
+  }, []);
+
+  const { addToCart } = useCart();
+
+  function handleAddToCart(medicine) {
+    addToCart(medicine);
+    toast.success("Added to cart successfully!");
+    setAddedMap((s) => ({ ...s, [medicine.id]: true }))
+    setTimeout(() => setAddedMap((s) => ({ ...s, [medicine.id]: false })), 1200)
   }
 
   return (
@@ -110,22 +116,30 @@ export default function Home() {
                 Order genuine medicines, supplements & healthcare essentials with fast delivery across Pakistan.
               </p>
 
-              <div className="mt-8 flex flex-wrap gap-4">
+              <div className="mt-8 flex flex-col sm:flex-row gap-4 max-w-lg">
+                {/* Search Input */}
+                <div className="flex-1 relative">
+                  <input
+                    type="text"
+                    value={localSearch}
+                    onChange={(e) => setLocalSearch(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && localSearch.trim()) {
+                        navigate(`/medicines?search=${encodeURIComponent(localSearch.trim())}`)
+                      }
+                    }}
+                    placeholder="Search medicines..."
+                    className="w-full px-5 py-3 rounded-full bg-white/95 backdrop-blur-sm text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-teal-400 transition-all"
+                  />
+                </div>
+
+                {/* Shop Now Button */}
                 <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
                   <Link
                     to="/medicines"
-                    className="inline-flex items-center gap-2 px-7 py-3 bg-white text-teal-700 font-semibold rounded-full hover:bg-gray-50 transition-colors shadow-lg"
+                    className="inline-flex items-center justify-center gap-2 px-7 py-3 bg-teal-600 text-white font-semibold rounded-full hover:bg-teal-700 transition-colors shadow-lg whitespace-nowrap"
                   >
                     Shop Now <ArrowRight size={18} />
-                  </Link>
-                </motion.div>
-                <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
-                  <Link
-                    to="/upload-prescription"
-                    className="inline-flex items-center gap-2 px-7 py-3 bg-teal-800 text-white font-semibold rounded-full hover:bg-teal-900 transition-colors border border-white/20"
-                  >
-                    <Upload size={18} />
-                    Upload Prescription
                   </Link>
                 </motion.div>
               </div>
@@ -212,47 +226,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ═══════════════ SHOP BY CATEGORY ═══════════════ */}
-      <section className="bg-white py-14">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-10"
-          >
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Shop by Category</h2>
-            <p className="mt-2 text-gray-500">Find exactly what you need from our wide range of healthcare products</p>
-          </motion.div>
-
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-7 gap-4"
-          >
-            {CATEGORIES.map((cat) => {
-              const Icon = cat.icon
-              return (
-                <motion.a
-                  key={cat.name}
-                  href="#"
-                  variants={itemVariants}
-                  whileHover={{ y: -4, boxShadow: '0 8px 25px rgba(0,0,0,0.08)' }}
-                  className="flex flex-col items-center gap-3 p-5 bg-white border border-gray-100 rounded-2xl hover:border-gray-200 transition-all cursor-pointer group"
-                >
-                  <div className={`w-14 h-14 ${cat.bg} ${cat.color} rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform`}>
-                    <Icon size={24} />
-                  </div>
-                  <span className="text-xs font-medium text-gray-700 text-center leading-tight">{cat.name}</span>
-                </motion.a>
-              )
-            })}
-          </motion.div>
-        </div>
-      </section>
-
       {/* ═══════════════ FEATURED PRODUCTS ═══════════════ */}
       <section className="bg-gray-50 py-14">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -286,51 +259,56 @@ export default function Home() {
             viewport={{ once: true }}
             className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5"
           >
-            {PRODUCTS.map((product) => (
+            {loading ? (
+              <div className="col-span-full py-10 flex justify-center">
+                <div className="w-8 h-8 border-2 border-teal-600 border-t-transparent rounded-full animate-spin"></div>
+              </div>
+            ) : featuredMedicines.map((medicine) => (
               <motion.div
-                key={product.id}
+                key={medicine.id}
                 variants={itemVariants}
                 whileHover={{ y: -4 }}
-                className="bg-white rounded-2xl overflow-hidden border border-gray-100 hover:shadow-lg transition-all group"
+                className="bg-white rounded-2xl overflow-hidden border border-gray-100 hover:shadow-lg transition-all group flex flex-col"
               >
                 {/* Image area */}
                 <div className="relative bg-gray-50 h-44 flex items-center justify-center p-4 group-hover:bg-gray-100/80 transition-colors">
-                  <PillIllustration />
+                  {medicine.image_url ? (
+                    <img src={medicine.image_url} alt={medicine.name} className="h-full object-contain mix-blend-multiply" />
+                  ) : (
+                    <PillIllustration />
+                  )}
                 </div>
 
                 {/* Content */}
-                <div className="p-4">
+                <div className="p-4 flex flex-col flex-1">
                   {/* Rating */}
                   <div className="flex items-center gap-1 mb-2">
                     <Star size={14} className="text-amber-400 fill-amber-400" />
-                    <span className="text-sm font-medium text-gray-700">{product.rating}</span>
+                    <span className="text-sm font-medium text-gray-700">4.8</span>
                   </div>
 
                   {/* Name & Description */}
-                  <h3 className="font-semibold text-gray-900 text-sm leading-snug">{product.name}</h3>
-                  <p className="text-xs text-teal-600 mt-0.5">{product.desc}</p>
+                  <h3 className="font-semibold text-gray-900 text-sm leading-snug line-clamp-1" title={medicine.name}>{medicine.name}</h3>
+                  <p className="text-xs text-teal-600 mt-0.5 line-clamp-1">{medicine.category}</p>
 
                   {/* Price & Cart */}
-                  <div className="flex items-center justify-between mt-4">
+                  <div className="flex items-center justify-between mt-auto pt-4">
                     <div className="flex items-baseline gap-2">
-                      <span className="text-base font-bold text-teal-700">Rs. {product.price.toLocaleString()}</span>
-                      {product.oldPrice && (
-                        <span className="text-xs text-gray-400 line-through">Rs. {product.oldPrice.toLocaleString()}</span>
-                      )}
+                      <span className="text-base font-bold text-teal-700">Rs. {medicine.price?.toLocaleString()}</span>
                     </div>
 
                     <motion.button
-                      onClick={() => handleAddToCart(product.id)}
+                      onClick={() => handleAddToCart(medicine)}
                       whileHover={{ scale: 1.08 }}
                       whileTap={{ scale: 0.92 }}
-                      className={`w-10 h-10 rounded-xl flex items-center justify-center transition-colors ${
-                        addedMap[product.id]
+                      className={`w-10 h-10 rounded-xl flex items-center justify-center transition-colors shrink-0 ${
+                        addedMap[medicine.id]
                           ? 'bg-emerald-500 text-white'
                           : 'bg-teal-600 text-white hover:bg-teal-700'
                       }`}
                       title="Add to cart"
                     >
-                      {addedMap[product.id] ? (
+                      {addedMap[medicine.id] ? (
                         <motion.svg
                           initial={{ scale: 0 }}
                           animate={{ scale: 1 }}

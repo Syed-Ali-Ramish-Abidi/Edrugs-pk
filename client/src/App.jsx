@@ -2,8 +2,10 @@ import React from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import Layout from './components/Layout'
 import ChatbotWidget from './components/ChatbotWidget'
+import { Toaster } from 'react-hot-toast'
 import Home from './pages/Home'
 import { CartProvider } from './context/CartContext'
+import { AuthProvider, useAuth } from './context/AuthContext'
 
 // Import correctly from the components directory where you edited them
 import Login from './components/Login'
@@ -25,15 +27,15 @@ import AdminDashboard from './pages/AdminDashboard'
   - 404 Not Found route included.
 */
 
-// Mock auth placeholder (replace with real auth logic)
-const mockAuth = {
-  isAuthenticated: true, // change to true to test protected pages
-  user: { role: 'admin' }, // role: 'user' | 'admin'
-}
-
 // Simple protected route wrapper
 function RequireAuth({ children }) {
-  if (!mockAuth.isAuthenticated) {
+  const auth = useAuth();
+  const user = auth?.user ?? null;
+  const loading = auth?.loading ?? true;
+  
+  if (loading) return <h1 style={{color: 'red', fontSize: '3rem', padding: '50px'}}>LOADING STUCK IN: RequireAuth</h1>;
+
+  if (!user) {
     return <Navigate to="/login" replace />
   }
   return children
@@ -41,7 +43,14 @@ function RequireAuth({ children }) {
 
 // Simple admin-only wrapper
 function RequireAdmin({ children }) {
-  if (!mockAuth.isAuthenticated || mockAuth.user.role !== 'admin') {
+  const auth = useAuth();
+  const user = auth?.user ?? null;
+  const role = auth?.role ?? null;
+  const loading = auth?.loading ?? true;
+
+  if (loading) return <h1 style={{color: 'red', fontSize: '3rem', padding: '50px'}}>LOADING STUCK IN: RequireAdmin</h1>;
+
+  if (!user || role !== 'admin') {
     return <Navigate to="/" replace />
   }
   return children
@@ -64,33 +73,36 @@ function NotFound() {
 export default function App() {
   return (
     <BrowserRouter>
-      <CartProvider>
-        <Routes>
-          {/* Public routes */}
-          <Route path="/" element={<Layout><Home /></Layout>} />
-          
-          {/* Authentication Routes */}
-          <Route path="/login" element={<Layout><Login /></Layout>} />
-          <Route path="/signup" element={<Layout><Signup /></Layout>} />
-          <Route path="/profile" element={<Layout><UserProfile /></Layout>} />
+      <AuthProvider>
+        <CartProvider>
+          <Routes>
+            {/* Public routes */}
+            <Route path="/" element={<Layout><Home /></Layout>} />
+            
+            {/* Authentication Routes */}
+            <Route path="/login" element={<Layout><Login /></Layout>} />
+            <Route path="/signup" element={<Layout><Signup /></Layout>} />
+            <Route path="/profile" element={<Layout><UserProfile /></Layout>} />
 
-          {/* E-commerce Routes */}
-          <Route path="/medicines" element={<Layout><MedicinesCatalog /></Layout>} />
-          <Route path="/medicines/:id" element={<Layout><MedicineDetail /></Layout>} />
-          <Route path="/cart" element={<Layout><Cart /></Layout>} />
-          <Route path="/checkout" element={<Layout><Checkout /></Layout>} />
+            {/* E-commerce Routes */}
+            <Route path="/medicines" element={<Layout><MedicinesCatalog /></Layout>} />
+            <Route path="/medicines/:id" element={<Layout><MedicineDetail /></Layout>} />
+            <Route path="/cart" element={<Layout><Cart /></Layout>} />
+            <Route path="/checkout" element={<Layout><Checkout /></Layout>} />
 
-          {/* Protected Routes */}
-          <Route path="/dashboard" element={<RequireAuth><Layout><UserDashboard /></Layout></RequireAuth>} />
-          <Route path="/admin" element={<RequireAdmin><AdminDashboard /></RequireAdmin>} />
+            {/* Protected Routes */}
+            <Route path="/dashboard" element={<RequireAuth><Layout><UserDashboard /></Layout></RequireAuth>} />
+            <Route path="/admin" element={<RequireAdmin><AdminDashboard /></RequireAdmin>} />
 
-          {/* Catch-all 404 */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+            {/* Catch-all 404 */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
 
-        {/* Chat widget present globally */}
-        <ChatbotWidget />
-      </CartProvider>
+          {/* Chat widget present globally */}
+          <ChatbotWidget />
+          <Toaster position="top-right" />
+        </CartProvider>
+      </AuthProvider>
     </BrowserRouter>
   )
 }
