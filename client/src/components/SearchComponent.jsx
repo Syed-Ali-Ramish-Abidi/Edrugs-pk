@@ -1,31 +1,40 @@
 import React, { useState, useRef, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Search, X } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
-
-const MOCK_MEDICINES = [
-  { id: 1, name: 'Paracetamol 500mg' },
-  { id: 2, name: 'Panadol Extra' },
-  { id: 3, name: 'Vitamin C 1000mg' },
-  { id: 4, name: 'Vitamin D3 1000IU' },
-  { id: 5, name: 'Augmentin 625mg' },
-  { id: 6, name: 'Centrum Silver' },
-  { id: 7, name: 'Ensure Powder' },
-  { id: 8, name: 'Omeprazole 20mg' },
-  { id: 9, name: 'Glucophage 500mg' },
-  { id: 10, name: 'Calpol Syrup' },
-]
+import { supabase } from '../config/supabaseClient'
 
 export default function SearchComponent() {
   const [input, setInput] = useState('')
+  const [suggestions, setSuggestions] = useState([])
   const [open, setOpen] = useState(false)
   const [highlighted, setHighlighted] = useState(-1)
   const inputRef = useRef(null)
+  const navigate = useNavigate()
 
-  const filtered = input.trim()
-    ? MOCK_MEDICINES.filter((m) =>
-        m.name.toLowerCase().includes(input.toLowerCase())
-      )
-    : []
+  // Fetch live suggestions from Supabase with debouncing
+  useEffect(() => {
+    const timer = setTimeout(async () => {
+      if (input.trim().length === 0) {
+        setSuggestions([])
+        return
+      }
+      try {
+        const { data, error } = await supabase
+          .from('medicines')
+          .select('id, name')
+          .ilike('name', `%${input.trim()}%`)
+          .limit(6)
+        if (error) throw error
+        setSuggestions(data || [])
+      } catch (err) {
+        console.error('Error fetching suggestions:', err)
+        setSuggestions([])
+      }
+    }, 300)
+
+    return () => clearTimeout(timer)
+  }, [input])
 
   function handleInputChange(e) {
     setInput(e.target.value)
@@ -34,27 +43,32 @@ export default function SearchComponent() {
   }
 
   function handleKeyDown(e) {
-    if (!open || filtered.length === 0) {
+    if (!open || suggestions.length === 0) {
       if (e.key === 'Escape') setOpen(false)
       return
     }
     if (e.key === 'ArrowDown') {
       e.preventDefault()
-      setHighlighted((h) => (h < filtered.length - 1 ? h + 1 : h))
+      setHighlighted((h) => (h < suggestions.length - 1 ? h + 1 : h))
     } else if (e.key === 'ArrowUp') {
       e.preventDefault()
       setHighlighted((h) => (h > 0 ? h - 1 : -1))
     } else if (e.key === 'Enter') {
       e.preventDefault()
-      if (highlighted >= 0) selectItem(filtered[highlighted])
+      if (highlighted >= 0) selectItem(suggestions[highlighted])
+      else if (input.trim().length > 0) {
+        setOpen(false)
+        navigate(`/medicines?search=${encodeURIComponent(input.trim())}`)
+      }
     } else if (e.key === 'Escape') {
       setOpen(false)
     }
   }
 
   function selectItem(item) {
-    setInput(item.name)
+    setInput('')
     setOpen(false)
+    navigate(`/medicines?search=${encodeURIComponent(item.name)}`)
   }
 
   function handleBlur() {
@@ -63,7 +77,7 @@ export default function SearchComponent() {
 
   return (
     <div className="relative w-full">
-      <form onSubmit={(e) => e.preventDefault()} className="relative">
+      <form onSubmit={(e) => { e.preventDefault(); if (input.trim()) navigate(`/medicines?search=${encodeURIComponent(input.trim())}`) }} className="relative">
         <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
         <input
           ref={inputRef}
@@ -96,7 +110,7 @@ export default function SearchComponent() {
       </form>
 
       <AnimatePresence>
-        {open && filtered.length > 0 && (
+        {open && suggestions.length > 0 && (
           <motion.div
             id="search-suggestions"
             role="listbox"
@@ -106,7 +120,7 @@ export default function SearchComponent() {
             className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-xl shadow-lg z-[100] overflow-hidden"
           >
             <ul className="max-h-64 overflow-y-auto py-1">
-              {filtered.map((item, idx) => (
+              {suggestions.map((item, idx) => (
                 <li key={item.id}>
                   <button
                     type="button"
@@ -128,7 +142,7 @@ export default function SearchComponent() {
         )}
       </AnimatePresence>
 
-      {open && input.trim().length > 0 && filtered.length === 0 && (
+      {open && input.trim().length > 0 && suggestions.length === 0 && (
         <motion.div
           initial={{ opacity: 0, y: -4 }}
           animate={{ opacity: 1, y: 0 }}
