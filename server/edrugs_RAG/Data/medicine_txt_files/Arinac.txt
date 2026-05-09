@@ -1,13 +1,11 @@
 Arinac
-Composition: 200mg + 30mg.
-Manufacturer: Abbott
+Composition: N/A
+Manufacturer: N/A
 Form: N/A
-
-Use: Cold, flu, nasal congestion
-
-Side Effects: Drowsiness, high BP
-
-Availability: All cities
-Age Restriction: 12+
-Prescription Required: Yes
-Price: 65
+Use: N/A
+Description: N/A
+Side Effects: N/A
+Availability: N/A
+Age Restriction: N/A
+Prescription Required: N/A
+Price: 100

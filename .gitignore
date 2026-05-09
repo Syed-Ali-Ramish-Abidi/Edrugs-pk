@@ -1,12 +1,10 @@
 # Dependencies
 node_modules/
-package-lock.json
 
-# Environment
+# Environment Variables (Maha-Important!)
 .env
 .env.local
 .env*.local
-.venv/
 
 # Build outputs
 dist/
