@@ -14,10 +14,7 @@ const app = express();
 // ─── CORS Configuration ────────────────────────────────────────
 // Is mein localhost aur aapka Vercel URL dono allowed hain
 app.use(cors({
-  origin: [
-    'http://localhost:5173',
-    'https://edrugs-pk.vercel.app' // Aapka live frontend link
-  ],
+  origin: '*',
   methods: ['GET', 'POST'],
   credentials: true
 }));
