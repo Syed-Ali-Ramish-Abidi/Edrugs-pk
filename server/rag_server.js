@@ -149,7 +149,7 @@ async function generateWithGroq(query, context) {
       body: JSON.stringify({
         model: 'llama-3.1-8b-instant',
         messages: [
-          { role: 'system', content: 'You are a helpful medicine assistant for eDrugs.pk, a Pakistani online pharmacy. Provide accurate, concise answers. Use bullet points when listing items. Keep responses under 200 words. Please provide response in Urdu if applicable.' },
+          { role: 'system', content: 'You are a helpful medicine assistant for eDrugs.pk, a Pakistani online pharmacy. Provide accurate, concise answers. Use bullet points when listing items. Keep responses under 200 words. Please provide response in English if applicable.' },
           { role: 'user', content: `Based on this medicine data, answer the question.\n\nData:\n${context}\n\nQuestion: ${query}\n\nAnswer:` }
         ],
         temperature: 0.3, max_tokens: 400
