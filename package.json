@@ -1,0 +1,15 @@
+{
+  "name": "edrugs-pk",
+  "version": "1.0.0",
+  "private": true,
+  "description": "eDrugs Pakistan - Medicine E-commerce Platform with RAG Chatbot",
+  "scripts": {
+    "dev": "concurrently --names \"RAG,CLIENT\" --prefix-colors \"magenta,cyan\" \"npm run rag\" \"npm run client\"",
+    "client": "cd client && npm run dev",
+    "rag": "cd server && node rag_server.js",
+    "sync": "cd server && node -e \"require('./rag_server.js')\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}

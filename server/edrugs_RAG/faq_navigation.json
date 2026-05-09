@@ -1,0 +1,234 @@
+{
+  "faq": [
+    {
+      "question": "How do I search for medicines on eDrugs?",
+      "keywords": ["search", "find", "look", "medicine", "drug"],
+      "answer": "You can search for medicines using the search bar at the top of every page. Just type the medicine name (e.g., 'Paracetamol' or 'Augmentin') and results will appear instantly. You can also browse medicines by category using the category navigation bar below the header."
+    },
+    {
+      "question": "How do I add medicines to my cart?",
+      "keywords": ["add", "cart", "buy", "purchase"],
+      "answer": "To add a medicine to your cart:\n1. Search for the medicine or browse the catalog at /medicines\n2. Click on any medicine card to view its details\n3. On the medicine detail page, click 'Add to Cart'\n4. You'll see a confirmation and the cart icon in the navbar will update\n5. You can view your cart anytime by clicking the cart icon in the top-right corner"
+    },
+    {
+      "question": "How do I proceed to checkout?",
+      "keywords": ["checkout", "order", "pay", "place order", "complete"],
+      "answer": "To checkout:\n1. Click the cart icon in the top-right corner to go to /cart\n2. Review your items and adjust quantities if needed\n3. Click 'Proceed to Checkout' to go to the checkout page (/checkout)\n4. Enter your delivery address and select a payment method\n5. Review your order summary and click 'Place Order'\n6. You'll receive an order confirmation"
+    },
+    {
+      "question": "What payment methods do you accept?",
+      "keywords": ["payment", "pay", "credit card", "debit", "cash", "method"],
+      "answer": "We accept multiple payment methods including:\n- Credit Cards (Visa, Mastercard)\n- Debit Cards\n- Digital Payment Methods\n- Cash on Delivery (COD) for select areas\nAll online payments are processed securely with encryption."
+    },
+    {
+      "question": "How long does delivery take?",
+      "keywords": ["delivery", "shipping", "time", "long", "arrive", "ship"],
+      "answer": "Delivery times depend on your location:\n- Standard Delivery: 2-3 business days (Free for orders above PKR 2000)\n- Express Delivery: 1 business day (PKR 200-500 depending on location)\n\nDelivery hours: 9 AM to 6 PM (Monday to Saturday)\nMedicines are delivered in secure packaging with temperature control where necessary."
+    },
+    {
+      "question": "Can I track my order?",
+      "keywords": ["track", "order", "status", "where", "delivery status"],
+      "answer": "Yes! Once your order is confirmed:\n1. You'll receive a tracking number via email\n2. Go to your dashboard at /dashboard\n3. Click on the order to see its current status\n4. You can track each step from 'Order Placed' to 'Delivered'"
+    },
+    {
+      "question": "Do I need a prescription for medicines?",
+      "keywords": ["prescription", "rx", "doctor", "required", "need prescription"],
+      "answer": "Some medicines require a valid prescription. On each medicine's detail page, you'll see a badge indicating if it's 'Prescription Required' or 'OTC (Over The Counter)'. For prescription medicines, you can upload your prescription during checkout. Our pharmacist team will verify it before dispatching."
+    },
+    {
+      "question": "What is the return policy?",
+      "keywords": ["return", "refund", "exchange", "policy", "money back"],
+      "answer": "Our return policy:\n- Unopened and unused medicines can be returned within 7 days of delivery for a full refund\n- Prescription medicines cannot be returned for safety reasons\n- Damaged or wrong items will be replaced immediately\n- Contact our support team through the chatbot or email for return requests"
+    },
+    {
+      "question": "How do I create an account?",
+      "keywords": ["create account", "sign up", "register", "new account", "signup"],
+      "answer": "To create an account:\n1. Click the user icon in the top-right corner of the navbar\n2. Select 'Create Account' from the dropdown\n3. Or navigate directly to /signup\n4. Enter your email address and create a password\n5. Fill in your personal details (name, phone number)\n6. Click 'Sign Up' to create your account\n7. You'll be logged in automatically"
+    },
+    {
+      "question": "How do I log in?",
+      "keywords": ["login", "sign in", "log in", "access", "account"],
+      "answer": "To log in:\n1. Click the user icon in the top-right corner of the navbar\n2. Select 'Sign In' from the dropdown\n3. Or navigate directly to /login\n4. Enter your email and password\n5. Click 'Sign In' to access your account\n\nOnce logged in, you can access your dashboard, order history, and profile."
+    },
+    {
+      "question": "How do I view my profile?",
+      "keywords": ["profile", "account details", "my account", "edit profile"],
+      "answer": "To view or edit your profile:\n1. Make sure you're logged in\n2. Click the user icon in the top-right corner\n3. Select 'Profile' from the dropdown\n4. Or navigate directly to /profile\n5. Here you can update your personal details, change password, and manage delivery addresses"
+    },
+    {
+      "question": "How do I view my orders?",
+      "keywords": ["orders", "order history", "my orders", "past orders", "dashboard"],
+      "answer": "To view your orders:\n1. Make sure you're logged in\n2. Click the user icon and select 'My Orders'\n3. Or navigate directly to /dashboard\n4. You'll see all your past and current orders with their status\n5. Click on any order to see its full details"
+    },
+    {
+      "question": "What categories of medicines are available?",
+      "keywords": ["categories", "types", "what medicines", "available", "browse"],
+      "answer": "We have medicines in many categories including:\n- Antibiotics\n- Pain Relievers\n- Cold & Flu\n- Digestive Health\n- Skincare & Dermatology\n- Antihistamines (Allergy)\n- Antifungals\n- Anti-inflammatory\n- Gels & Topicals\n- Vitamins & Supplements\n\nBrowse all categories using the category navigation bar below the header, or go to /medicines to see the full catalog."
+    },
+    {
+      "question": "How do I contact support?",
+      "keywords": ["contact", "support", "help", "customer service", "reach"],
+      "answer": "You can reach us through:\n- This chatbot assistant (available 24/7)\n- The contact page on our website\n- Email support\n\nOur team typically responds within 24 hours during business days."
+    },
+    {
+      "question": "Is my data safe?",
+      "keywords": ["data", "privacy", "safe", "secure", "security"],
+      "answer": "Yes, your data is completely safe. We use:\n- Secure authentication powered by Supabase\n- Encrypted payment processing\n- HTTPS encryption for all data transfer\n- We never share your personal or medical information with third parties"
+    },
+    {
+      "question": "What is eDrugs.pk?",
+      "keywords": ["what is", "edrugs", "about", "platform", "website"],
+      "answer": "eDrugs.pk is Pakistan's online medicine e-commerce platform. We provide:\n- A wide catalog of verified medicines\n- Easy search and browsing by category\n- Secure online ordering and checkout\n- Fast delivery across Pakistan\n- Prescription verification for controlled medicines\n- User dashboards to track orders\n\nOur mission is to make medicine accessible and affordable for everyone in Pakistan."
+    }
+  ],
+  "navigation": {
+    "main_sections": [
+      {
+        "name": "Home",
+        "path": "/",
+        "description": "Main landing page with featured medicines, promotions, and quick access to popular categories. You'll find trending medicines and health tips here.",
+        "how_to_access": "Click the 'Edrugs.pk' logo in the top-left corner or navigate to the root URL"
+      },
+      {
+        "name": "Medicines Catalog",
+        "path": "/medicines",
+        "description": "Browse all available medicines. You can filter by category, search by name, sort by price, and view detailed information about each medicine.",
+        "how_to_access": "Click on any category in the navigation bar below the header, or go to /medicines"
+      },
+      {
+        "name": "Medicine Detail",
+        "path": "/medicines/:id",
+        "description": "View detailed information about a specific medicine including composition, manufacturer, price, side effects, and whether a prescription is required. You can add the medicine to your cart from here.",
+        "how_to_access": "Click on any medicine card in the catalog or search results"
+      },
+      {
+        "name": "Shopping Cart",
+        "path": "/cart",
+        "description": "View all items you've added to your cart. You can adjust quantities, remove items, and see the total amount before proceeding to checkout.",
+        "how_to_access": "Click the shopping cart icon in the top-right corner of the navbar"
+      },
+      {
+        "name": "Checkout",
+        "path": "/checkout",
+        "description": "Complete your purchase by entering delivery address, selecting payment method, and reviewing your order summary.",
+        "how_to_access": "Click 'Proceed to Checkout' from the cart page"
+      },
+      {
+        "name": "User Dashboard",
+        "path": "/dashboard",
+        "description": "View your order history, track current orders, and manage your account. Shows all past and active orders with their status.",
+        "how_to_access": "Click the user icon → 'My Orders' (requires login)"
+      },
+      {
+        "name": "Profile",
+        "path": "/profile",
+        "description": "View and edit your personal information, change password, and manage your delivery addresses.",
+        "how_to_access": "Click the user icon → 'Profile' (requires login)"
+      },
+      {
+        "name": "Login",
+        "path": "/login",
+        "description": "Sign in to your existing account with email and password to access protected features like order tracking and checkout.",
+        "how_to_access": "Click the user icon → 'Sign In'"
+      },
+      {
+        "name": "Sign Up",
+        "path": "/signup",
+        "description": "Create a new account on eDrugs.pk. Enter your email, password, and personal details to start ordering medicines.",
+        "how_to_access": "Click the user icon → 'Create Account'"
+      },
+      {
+        "name": "Admin Dashboard",
+        "path": "/admin",
+        "description": "Admin-only area for managing products, viewing all orders, and managing the platform. Only accessible by admin accounts.",
+        "how_to_access": "Available only to admin users after login"
+      }
+    ],
+    "categories": [
+      "Antibiotics",
+      "Pain Relievers",
+      "Cold & Flu",
+      "Digestive Health",
+      "Skincare",
+      "Antihistamines",
+      "Antifungals",
+      "Anti-inflammatory",
+      "Gels & Topicals",
+      "Vitamins & Supplements"
+    ],
+    "common_tasks": [
+      {
+        "task": "Buy a medicine",
+        "steps": [
+          "Search for the medicine using the search bar or browse the catalog (/medicines)",
+          "Click on the medicine to view details",
+          "Click 'Add to Cart'",
+          "Click the cart icon to review your cart (/cart)",
+          "Click 'Proceed to Checkout' (/checkout)",
+          "Enter delivery details and place your order"
+        ]
+      },
+      {
+        "task": "Track an order",
+        "steps": [
+          "Log in to your account (/login)",
+          "Go to your dashboard (/dashboard)",
+          "Find your order in the list",
+          "Click on it to see detailed tracking information"
+        ]
+      },
+      {
+        "task": "Browse by category",
+        "steps": [
+          "Look at the category navigation bar below the header",
+          "Click on a category (e.g., 'Antibiotics', 'Pain Relievers')",
+          "You'll see all medicines in that category",
+          "Use filters to narrow down results"
+        ]
+      },
+      {
+        "task": "Manage your account",
+        "steps": [
+          "Click the user icon in the top-right corner",
+          "Select 'Profile' to edit personal details (/profile)",
+          "Select 'My Orders' to view order history (/dashboard)",
+          "Use 'Logout' to sign out of your account"
+        ]
+      }
+    ]
+  },
+  "delivery": {
+    "information": "We deliver to all major cities in Pakistan including Karachi, Lahore, Islamabad, Rawalpindi, Faisalabad, Multan, Peshawar, and Quetta.",
+    "shipping_methods": [
+      {
+        "type": "Standard Delivery",
+        "time": "2-3 business days",
+        "cost": "Free for orders above PKR 2000, PKR 150 otherwise"
+      },
+      {
+        "type": "Express Delivery",
+        "time": "1 business day",
+        "cost": "PKR 200-500 depending on location"
+      }
+    ],
+    "delivery_hours": "9 AM to 6 PM (Monday to Saturday)",
+    "note": "Medicines are delivered in secure packaging with temperature control where necessary. A delivery confirmation SMS will be sent to your registered phone number.",
+    "free_delivery_threshold": "PKR 2000",
+    "areas_covered": "All major cities in Pakistan"
+  },
+  "platform_info": {
+    "name": "eDrugs.pk",
+    "tagline": "Pakistan's Online Medicine Platform",
+    "description": "eDrugs.pk is an e-commerce platform for purchasing medicines online in Pakistan. We offer a wide range of verified medicines with fast delivery, secure payments, and prescription verification.",
+    "features": [
+      "Wide catalog of verified medicines",
+      "Search and browse by category",
+      "Secure online ordering",
+      "Multiple payment methods",
+      "Fast delivery across Pakistan",
+      "Order tracking",
+      "Prescription verification",
+      "24/7 AI-powered assistant"
+    ]
+  }
+}

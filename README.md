@@ -1,396 +1,280 @@
-# Edrugs.pk - Online Pharmacy E-Commerce Platform
+# eDrugs.pk — Online Medicine Platform
 
-A modern, feature-rich online pharmacy application built with **React**, **Supabase**, **Tailwind CSS**, and **Framer Motion**. Edrugs.pk provides a seamless experience for customers to browse, search, and order medicines and healthcare products with prescription verification for regulated items.
-
----
-
-## 🌟 Features
-
-### Customer Features
-- **Hierarchical Category Browsing** — Navigate medicines by main categories, subcategories, and item types
-- **Global Search** — Real-time search suggestions powered by Supabase with 300ms debouncing
-- **Shopping Cart** — Add/remove items, view cart totals, manage quantities
-- **Prescription Management** — Upload prescriptions for Rx-required medicines (image validation, <5MB)
-- **Order Checkout** — Secure order placement with delivery address and payment method selection
-- **User Dashboard** — View order history, manage profile, addresses, and payment cards
-- **Modern Notifications** — Toast-based alerts instead of browser alerts for better UX
-
-### Admin Features
-- **Admin Dashboard** — Comprehensive analytics with live data from Supabase
-- **Medicine Inventory Management** — Add, edit, delete medicines with hierarchical categorization
-- **User Management** — View users, toggle roles (Admin/User), manage account status
-- **Order Management** — View all orders, update status, verify prescriptions
-- **Prescription Verification** — View uploaded prescriptions directly from order details
-
-### Technical Highlights
-- **Authentication** — Role-based access control (RBAC) with loading states and email bypass for VIP users
-- **Responsive Design** — Mobile-first approach with Tailwind CSS grid system
-- **Real-time Sync** — Supabase integration for live data synchronization
-- **Smooth Animations** — Framer Motion for polished micro-interactions
-- **Protected Routes** — Auth guards for dashboard and admin pages
+An e-commerce platform for purchasing medicines online in Pakistan, featuring an AI-powered RAG chatbot assistant.
 
 ---
 
-## 🛠️ Tech Stack
+## Architecture
 
-| Category | Technology |
-|----------|-----------|
-| **Frontend** | React 19.2.5 |
-| **Routing** | React Router v7 |
-| **Backend/Database** | Supabase (PostgreSQL) |
-| **Styling** | Tailwind CSS 3.4.19 |
-| **Animations** | Framer Motion 12.38.0 |
-| **Icons** | Lucide React 1.14.0 |
-| **Charts** | Recharts 3.8.1 |
-| **Notifications** | React Hot Toast 2.4.0 |
-| **Build Tool** | Vite 8.0.10 |
+```
+┌──────────────────────────────────────────────────────────┐
+│                    Frontend (React/Vite)                  │
+│  client/src/                                             │
+│  ├── Pages: Home, Medicines, Cart, Checkout, Dashboard   │
+│  ├── ChatbotWidget.jsx → RAG chatbot UI                  │
+│  └── Supabase client for auth & data                     │
+└──────────────────┬───────────────────────────────────────┘
+                   │  /api/rag/*
+                   ▼
+┌──────────────────────────────────────────────────────────┐
+│              RAG Server (Node.js/Express)                 │
+│  server/rag_server.js                                    │
+│  ├── ChromaDB Cloud → vector search (medicine queries)   │
+│  ├── Groq API → LLM answer generation                   │
+│  ├── FAQ/Navigation JSON → instant answers               │
+│  └── Supabase sync → auto-updates ChromaDB               │
+└──────────────────┬──────────────┬────────────────────────┘
+                   │              │
+         ┌─────────▼──┐   ┌──────▼───────┐
+         │ ChromaDB   │   │  Supabase    │
+         │ Cloud      │   │  (Postgres)  │
+         │ (vectors)  │   │  auth + data │
+         └────────────┘   └──────────────┘
+```
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 Edrugs-pk/
-├── client/                          # React frontend application
+├── client/                    # Frontend (React + Vite)
 │   ├── src/
-│   │   ├── components/              # Reusable components
-│   │   │   ├── Navbar.jsx          # Top navigation with search
-│   │   │   ├── CategoryNav.jsx      # Hierarchical category menu
-│   │   │   ├── SearchComponent.jsx  # Global search with live suggestions
-│   │   │   ├── Login.jsx            # Auth component
-│   │   │   ├── Signup.jsx           # Registration component
-│   │   │   ├── Cart.jsx             # Cart management
-│   │   │   ├── UserProfile.jsx      # User profile view
-│   │   │   ├── Layout.jsx           # Main layout wrapper
-│   │   │   ├── ErrorBoundary.jsx    # Error boundary
-│   │   │   ├── ChatbotWidget.jsx    # Chatbot integration
-│   │   │   ├── BlogSection.jsx      # Blog/content section
-│   │   │   └── Footer.jsx           # Footer
+│   │   ├── components/
+│   │   │   ├── ChatbotWidget.jsx    # AI chatbot UI
+│   │   │   ├── Navbar.jsx
+│   │   │   ├── Footer.jsx
+│   │   │   └── ...
 │   │   ├── pages/
-│   │   │   ├── Home.jsx             # Homepage with hero and search
-│   │   │   ├── MedicinesCatalog.jsx # Products listing with filters
-│   │   │   ├── MedicineDetail.jsx   # Single product detail
-│   │   │   ├── Cart.jsx             # Shopping cart
-│   │   │   ├── Checkout.jsx         # Order placement
-│   │   │   ├── UserDashboard.jsx    # User orders & profile
-│   │   │   └── AdminDashboard.jsx   # Admin management panel
-│   │   ├── context/
-│   │   │   ├── AuthContext.jsx      # Global auth state
-│   │   │   └── CartContext.jsx      # Global cart state
-│   │   ├── config/
-│   │   │   └── supabaseClient.js    # Supabase initialization
-│   │   ├── constants/
-│   │   │   └── categories.js        # Hierarchical category structure
-│   │   ├── App.jsx                  # Main app with routing
-│   │   ├── main.jsx                 # Entry point
-│   │   ├── index.css                # Global styles
-│   │   └── App.css                  # App styles
-│   ├── public/                      # Static assets
-│   ├── package.json                 # Dependencies
-│   ├── vite.config.js               # Vite configuration
-│   ├── tailwind.config.js           # Tailwind CSS config
-│   └── postcss.config.js            # PostCSS config
-└── server/                          # Backend (Node.js/Python)
-    └── edrugs_RAG/                  # RAG (Retrieval-Augmented Generation) setup
+│   │   │   ├── HomePage.jsx
+│   │   │   ├── MedicinesPage.jsx
+│   │   │   ├── CartPage.jsx
+│   │   │   ├── CheckoutPage.jsx
+│   │   │   ├── DashboardPage.jsx
+│   │   │   └── ...
+│   │   ├── context/              # Auth & cart context
+│   │   ├── lib/supabase.js       # Supabase client
+│   │   └── App.jsx               # Routes
+│   ├── api/rag.js                # Vercel serverless function
+│   ├── vercel.json               # Vercel config
+│   └── .env.local                # Client environment vars
+│
+├── server/                    # Backend (Node.js)
+│   ├── rag_server.js             # RAG chatbot server
+│   ├── ingest_chroma.js          # Ingest medicines into ChromaDB
+│   ├── edrugs_RAG/
+│   │   ├── faq_navigation.json   # FAQ, navigation, delivery data
+│   │   └── Data/                 # Medicine text files (synced from Supabase)
+│   ├── package.json
+│   └── .env                      # Server environment vars
+│
+├── package.json               # Root (runs both servers via concurrently)
+└── README.md                  # This file
 ```
 
 ---
 
-## 🚀 Getting Started
+## Frontend
+
+**Stack:** React 19, Vite, Tailwind CSS, Framer Motion, Lucide Icons
+
+### Pages
+| Route | Page | Description |
+|-------|------|-------------|
+| `/` | Home | Landing page with featured medicines and categories |
+| `/medicines` | Catalog | Browse/search all medicines, filter by category |
+| `/medicines/:id` | Detail | Medicine info, add to cart |
+| `/cart` | Cart | View items, adjust quantities |
+| `/checkout` | Checkout | Delivery address, payment, place order |
+| `/dashboard` | Dashboard | Order history and tracking |
+| `/profile` | Profile | Edit personal details |
+| `/login` | Login | Sign in with email/password |
+| `/signup` | Sign Up | Create account |
+| `/admin` | Admin | Manage products and orders (admin only) |
+
+### Key Components
+- **ChatbotWidget** — Floating AI chatbot that connects to the RAG server. Shows connection status, suggestion chips, typing indicator, and query-type badges.
+- **Navbar** — Category navigation, search bar, cart icon, user menu
+- **ProductCard** — Medicine card with image, price, add-to-cart
+
+---
+
+## Backend — RAG Server
+
+**Stack:** Node.js, Express, ChromaDB Cloud, Groq API
+
+The RAG server (`server/rag_server.js`) runs on port 8000 during development and handles all chatbot queries.
+
+### How It Works
+
+1. **User sends a query** via the ChatbotWidget
+2. **ChromaDB Cloud** performs semantic vector search across all indexed medicines
+3. If a strong medicine match is found:
+   - Context from top 3 results is passed to **Groq (LLaMA 3.1)** for natural language answer generation
+4. If no medicine match:
+   - Checks **navigation/delivery/platform info** from `faq_navigation.json`
+   - Checks **FAQ** database for keyword matches
+5. If nothing matches:
+   - Falls back to Groq with general knowledge
+
+### API Endpoints
+
+| Method | Path | Description |
+|--------|------|-------------|
+| `GET` | `/health` | Health check — returns ChromaDB status and doc count |
+| `POST` | `/chat` | Main chat endpoint — accepts `{ query: string }` |
+| `POST` | `/update-medicines` | Trigger Supabase → ChromaDB sync |
+| `POST` | `/webhook/new-medicine` | Webhook for Supabase inserts (auto-updates ChromaDB) |
+
+### Auto-Sync
+
+- On server startup, medicines are fetched from Supabase and upserted into ChromaDB Cloud
+- Every 5 minutes, a periodic sync runs automatically
+- The `/webhook/new-medicine` endpoint can be configured in Supabase Database Webhooks for real-time updates
+
+---
+
+## Supabase
+
+**Used for:** Authentication, database (medicines, orders, users), real-time subscriptions
+
+### Tables
+- **medicines** — Drug catalog (name, manufacturer, price, indication, side effects, etc.)
+- **orders** — User orders with status tracking
+- **profiles** — User profile data
+
+### Auth
+- Email/password authentication via Supabase Auth
+- Row Level Security (RLS) for data protection
+- Admin role management for the admin dashboard
+
+### Integration Points
+1. **Frontend** — Supabase JS client for auth, fetching medicines, placing orders
+2. **RAG Server** — REST API to fetch medicines for vector database sync
+3. **Webhooks** — Supabase can call `/webhook/new-medicine` when new medicines are inserted
+
+---
+
+## RAG Pipeline
+
+```
+Medicine Data (Supabase DB)
+        │
+        ▼
+  Sync to ChromaDB Cloud     ←── Runs on startup + every 5 min
+  (vector embeddings)              + on webhook trigger
+        │
+        ▼
+  User Query ──→ Vector Search (ChromaDB)
+        │              │
+        │         Top 3 results
+        │              │
+        ▼              ▼
+   FAQ/Nav check    Groq LLM (LLaMA 3.1)
+        │              │
+        ▼              ▼
+   Instant answer   Generated answer
+```
+
+### Components
+
+| Component | Service | Purpose |
+|-----------|---------|---------|
+| Vector Store | ChromaDB Cloud | Stores medicine embeddings, handles semantic search |
+| LLM | Groq (LLaMA 3.1 8B Instant) | Generates natural language answers from retrieved context |
+| FAQ/Nav | Local JSON | Instant answers for navigation, delivery, platform questions |
+| Data Source | Supabase | Source of truth for medicine data |
+
+### When the RAG Pipeline Runs
+- **Server startup** — Initial sync from Supabase → ChromaDB
+- **Every 5 minutes** — Periodic background sync
+- **On webhook** — When Supabase triggers `/webhook/new-medicine`
+- **Manual trigger** — `POST /update-medicines`
+
+---
+
+## Environment Variables
+
+### `client/.env.local`
+```
+VITE_SUPABASE_URL=<your-supabase-url>
+VITE_SUPABASE_ANON_KEY=<your-supabase-anon-key>
+VITE_RAG_SERVER_URL=/api/rag
+```
+
+### `server/.env`
+```
+# Supabase
+SUPABASE_URL=<your-supabase-url>
+SUPABASE_KEY=<your-supabase-anon-key>
+
+# RAG - Groq LLM
+RAG_GROQ_INF_API=<your-groq-api-key>
+
+# RAG - ChromaDB Cloud
+CHROMA_API_KEY=<your-chroma-api-key>
+CHROMA_TENANT=<your-chroma-tenant-id>
+CHROMA_DATABASE=<your-chroma-database-name>
+```
+
+### Vercel Environment Variables
+When deploying to Vercel, add these in the Vercel dashboard → Settings → Environment Variables:
+- `RAG_GROQ_INF_API`
+- `CHROMA_API_KEY`
+- `CHROMA_TENANT`
+- `CHROMA_DATABASE`
+- `VITE_SUPABASE_URL`
+- `VITE_SUPABASE_ANON_KEY`
+- `VITE_RAG_SERVER_URL` = `/api/rag`
+
+---
+
+## Getting Started
 
 ### Prerequisites
-- **Node.js** v18+ and npm v9+
-- **Git**
-- Supabase account (for database and authentication)
+- Node.js 18+
+- npm
 
 ### Installation
 
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/Syed-Ali-Ramish-Abidi/Edrugs-pk.git
-   cd Edrugs-pk
-   ```
+```bash
+# Clone the repo
+git clone <repo-url>
+cd Edrugs-pk
 
-2. **Install client dependencies:**
-   ```bash
-   cd client
-   npm install
-   ```
+# Install root dependencies (concurrently)
+npm install
 
-3. **Set up environment variables:**
-   Create a `.env.local` file in the `client` directory:
-   ```env
-   VITE_SUPABASE_URL=your_supabase_url
-   VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
-   ```
+# Install client dependencies
+cd client && npm install && cd ..
 
-4. **Start the development server:**
-   ```bash
-   npm run dev
-   ```
+# Install server dependencies
+cd server && npm install && cd ..
+```
 
-   The application will be available at `http://localhost:5173`
-
-### Build for Production
+### Ingest Medicine Data
 
 ```bash
-npm run build
-npm run preview  # Preview the production build locally
+cd server && node ingest_chroma.js
 ```
 
----
+This syncs medicines from Supabase and pushes them into ChromaDB Cloud.
 
-## 📱 Key Pages & Routes
+### Run Development
 
-| Route | Description |
-|-------|-------------|
-| `/` | Homepage with featured products |
-| `/medicines` | Product catalog with filters |
-| `/medicines/:id` | Single product details |
-| `/cart` | Shopping cart |
-| `/checkout` | Order placement |
-| `/login` | Customer login |
-| `/signup` | Customer registration |
-| `/dashboard` | User order history & profile |
-| `/admin` | Admin dashboard (admin only) |
-| `/profile` | User profile management |
-
----
-
-## 🔐 Authentication & Authorization
-
-- **Login/Signup** — Email-based authentication via Supabase Auth
-- **Role-Based Access** — Admin vs. User roles stored in profiles table
-- **Protected Routes** — Use `RequireAuth` and `RequireAdmin` wrappers
-- **Loading States** — Prevent redirects during role fetching
-- **Email Bypass** — VIP users can bypass some restrictions
-
-### User Roles
-- **Admin** — Full access to dashboard, inventory, user management, orders
-- **User** — Access to shopping, cart, orders, profile, checkout
-
----
-
-## 🔍 Search & Filtering
-
-### Global Search
-- **Live Suggestions** — Query Supabase `medicines` table in real-time
-- **Debouncing** — 300ms delay to optimize database queries
-- **Navigation** — Redirects to `/medicines?search=query` on selection or Enter
-
-### Category Filtering
-- **Hierarchical Navigation** — Browse by main category → subcategory → item type
-- **URL Params** — Filters preserved in URL (`?main=...&sub=...`)
-- **Combined Search** — Filter by category AND search term simultaneously
-
-### Responsive Grids
-- Desktop: `grid-cols-4` (4 products per row)
-- Tablet: `grid-cols-2` (2 products per row)
-- Mobile: `grid-cols-1` (1 product per row)
-
----
-
-## 💳 Checkout & Prescriptions
-
-### Regular Medicines (OTC)
-- Add to cart → Checkout → No prescription needed
-
-### Prescription-Required Medicines (Rx)
-1. Add Rx medicine to cart
-2. At checkout, file upload required
-3. Accepted formats: **JPG, PNG, WEBP**
-4. File size limit: **< 5MB**
-5. File uploaded to Supabase Storage (`prescriptions` bucket)
-6. `prescription_url` saved to `orders` table
-7. Admin can verify by clicking "View Prescription" in order details
-
----
-
-## 📊 Admin Dashboard Features
-
-### Overview Tab
-- Total users count
-- Active orders count
-- Total revenue (delivered orders)
-- Medicines in stock
-- Revenue trend (7-day chart)
-
-### Users Tab
-- View all users with role and status
-- Toggle user roles (Admin ↔ User)
-- Toggle account status (Active ↔ Inactive)
-- Search by name/email
-
-### Inventory Tab
-- Add new medicines with hierarchical categorization
-- Edit existing medicines
-- Delete medicines
-- View low-stock alerts
-- Search and filter by category
-
-### Orders Tab
-- View all orders
-- Update order status (Pending → Processing → Shipped → Delivered)
-- View customer details
-- View order items and amounts
-- **View prescription** if uploaded
-
----
-
-## 🎨 Styling & Theme
-
-### Color Scheme
-- **Primary** — Teal (#0d9488)
-- **Accent** — Emerald, Amber (for alerts)
-- **Neutral** — Gray, Slate
-
-### Components
-- **Buttons** — Rounded, teal background with hover effects
-- **Cards** — White with border, shadow on hover
-- **Forms** — Clean inputs with focus rings
-- **Modals** — Overlay with animation
-- **Notifications** — Toast at top-right with icons
-
-### Responsive Breakpoints
-- Mobile: < 640px
-- Tablet: 640px - 1024px
-- Desktop: > 1024px
-
----
-
-## 🔄 State Management
-
-### Context APIs
-- **AuthContext** — User, role, loading, login/logout
-- **CartContext** — Items, total, add/remove/clear
-
-### Local Storage
-- `userRole` — Cached role for faster auth checks
-- Shopping cart (optional, can be added)
-
----
-
-## 🚨 Error Handling
-
-### Toast Notifications
-- ✅ **Success** — Green toast (add to cart, order placed)
-- ❌ **Error** — Red toast (validation, API failures)
-- ℹ️ **Info** — Blue toast (status updates)
-
-### Error Boundary
-- Catches React component errors
-- Displays fallback UI
-- Logs errors to console
-
----
-
-## 📝 Database Schema (Supabase)
-
-### tables
-
-**profiles** (User data)
-```sql
-- id (UUID, primary key)
-- full_name (TEXT)
-- email (TEXT)
-- role (TEXT: 'user' | 'admin')
-- status (TEXT: 'Active' | 'Inactive')
-- created_at (TIMESTAMP)
+```bash
+npm run dev
 ```
 
-**medicines** (Product catalog)
-```sql
-- id (UUID, primary key)
-- name (TEXT)
-- price (NUMERIC)
-- stock (INTEGER)
-- main_category (TEXT)
-- sub_category (TEXT)
-- item_type (TEXT)
-- is_rx (BOOLEAN)
-- image_url (TEXT)
-- category (TEXT, deprecated)
-- low_stock_threshold (INTEGER)
-- created_at (TIMESTAMP)
+This starts both servers simultaneously:
+- **RAG Server** → http://localhost:8000
+- **Vite Client** → http://localhost:5173
+
+### Deploy to Vercel
+
+```bash
+cd client
+vercel deploy
 ```
 
-**orders** (Customer orders)
-```sql
-- id (UUID, primary key)
-- user_id (UUID, foreign key → profiles)
-- items (JSON: [{name, qty, price}, ...])
-- total_amount (NUMERIC)
-- delivery_address (TEXT)
-- payment_method (TEXT: 'cod' | 'card')
-- status (TEXT: 'Pending' | 'Processing' | 'Shipped' | 'Delivered' | 'Cancelled')
-- prescription_url (TEXT, optional)
-- created_at (TIMESTAMP)
-```
-
-### Storage Buckets
-
-**prescriptions** (Prescription images)
-- Public read access
-- Named: `rx-{timestamp}.{extension}`
-
----
-
-## 🐛 Common Issues & Troubleshooting
-
-### "LOADING STUCK" Message
-- **Issue**: Auth state loading indefinitely
-- **Solution**: Check AuthContext loading state logic, ensure Supabase client is initialized
-
-### Prescription Upload Fails
-- **Issue**: `InvalidKey` error from Supabase
-- **Solution**: Ensure filename is clean (alphanumeric, hyphens, dots only)
-
-### Search Not Working
-- **Issue**: Suggestions not appearing
-- **Solution**: Verify Supabase connection, check browser console for errors
-
-### Mobile Layout Broken
-- **Issue**: Cards overlapping or text cut off
-- **Solution**: Ensure Tailwind classes include `sm:`, `md:` breakpoints
-
----
-
-## 📚 Additional Resources
-
-- [React Documentation](https://react.dev)
-- [Supabase Documentation](https://supabase.com/docs)
-- [Tailwind CSS Documentation](https://tailwindcss.com/docs)
-- [Framer Motion Documentation](https://www.framer.com/motion/)
-- [React Router Documentation](https://reactrouter.com/)
-
----
-
-## 👥 Team & Contribution
-
-**Project Owner:** Syed Ali Ramish Abidi
-
-For contributions, please:
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/your-feature`)
-3. Commit changes (`git commit -m 'feat: add new feature'`)
-4. Push to branch (`git push origin feature/your-feature`)
-5. Open a Pull Request
-
----
-
-## 📄 License
-
-This project is proprietary and confidential. Unauthorized copying or distribution is prohibited.
-
----
-
-## 📞 Support & Contact
-
-For issues, questions, or feedback:
-- **Email**: ali.ramish1214@gmail.com
-- **GitHub**: [@Syed-Ali-Ramish-Abidi](https://github.com/Syed-Ali-Ramish-Abidi)
-
----
-
-**Last Updated:** May 8, 2026
-**Version:** 1.0.0
+Add the environment variables in the Vercel dashboard. The serverless function at `api/rag.js` handles all chatbot requests in production.
