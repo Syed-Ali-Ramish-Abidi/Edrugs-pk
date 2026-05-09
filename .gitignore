@@ -35,3 +35,5 @@ graphify-out/
 # Temporary
 *.temp
 temp/
+pakage-lock.json
+package.json
