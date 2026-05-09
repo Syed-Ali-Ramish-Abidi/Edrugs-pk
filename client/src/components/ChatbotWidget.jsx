@@ -3,8 +3,8 @@ import { MessageCircle, Send, X, Bot, Sparkles, ArrowRight, RefreshCw, Wifi, Wif
 import { motion, AnimatePresence } from 'framer-motion'
 import { useLocation } from 'react-router-dom'
 
-const RAG_URL = import.meta.env.VITE_RAG_SERVER_URL || 'http://localhost:8000'
-
+// Purani line mita dein aur yeh wali daal dein:
+const RAG_URL = import.meta.env.VITE_API_BASE_URL || 'https://edrugs-rag-api.onrender.com';
 // Quick suggestion chips the user can click
 const SUGGESTION_CHIPS = [
   { label: '💊 Search medicines', query: 'How do I search for medicines?' },
@@ -269,13 +269,12 @@ export default function ChatbotWidget() {
                   className={`flex ${m.from === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
                   <div
-                    className={`max-w-[85%] px-3.5 py-2.5 rounded-2xl text-[13px] leading-relaxed shadow-sm ${
-                      m.from === 'user'
+                    className={`max-w-[85%] px-3.5 py-2.5 rounded-2xl text-[13px] leading-relaxed shadow-sm ${m.from === 'user'
                         ? 'bg-teal-600 text-white rounded-br-md'
                         : m.type === 'error'
-                        ? 'bg-amber-50 text-amber-900 border border-amber-200 rounded-bl-md'
-                        : 'bg-white text-slate-700 border border-gray-100 rounded-bl-md'
-                    }`}
+                          ? 'bg-amber-50 text-amber-900 border border-amber-200 rounded-bl-md'
+                          : 'bg-white text-slate-700 border border-gray-100 rounded-bl-md'
+                      }`}
                   >
                     {renderText(m.text)}
 
@@ -292,14 +291,13 @@ export default function ChatbotWidget() {
                     {/* Query type badge */}
                     {m.type && m.from === 'ai' && m.type !== 'welcome' && m.type !== 'error' && (
                       <div className="mt-1.5 flex items-center gap-1">
-                        <span className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-medium ${
-                          m.type === 'medicine' ? 'bg-teal-50 text-teal-600' :
-                          m.type === 'navigation' ? 'bg-blue-50 text-blue-600' :
-                          m.type === 'delivery' ? 'bg-orange-50 text-orange-600' :
-                          m.type === 'faq' ? 'bg-purple-50 text-purple-600' :
-                          m.type === 'platform' ? 'bg-emerald-50 text-emerald-600' :
-                          'bg-gray-50 text-gray-500'
-                        }`}>
+                        <span className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-medium ${m.type === 'medicine' ? 'bg-teal-50 text-teal-600' :
+                            m.type === 'navigation' ? 'bg-blue-50 text-blue-600' :
+                              m.type === 'delivery' ? 'bg-orange-50 text-orange-600' :
+                                m.type === 'faq' ? 'bg-purple-50 text-purple-600' :
+                                  m.type === 'platform' ? 'bg-emerald-50 text-emerald-600' :
+                                    'bg-gray-50 text-gray-500'
+                          }`}>
                           {m.type}
                         </span>
                       </div>
