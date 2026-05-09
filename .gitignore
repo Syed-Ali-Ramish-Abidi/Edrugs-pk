@@ -1,4 +1,39 @@
+# Dependencies
 node_modules/
+package-lock.json
+
+# Environment
 .env
+.env.local
+.env*.local
+.venv/
+
+# Build outputs
+dist/
+build/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Graphify & Cache
+graphify-out/
+.cache/
+
+# Temporary
+*.temp
+temp/
 pakage-lock.json
 package.json

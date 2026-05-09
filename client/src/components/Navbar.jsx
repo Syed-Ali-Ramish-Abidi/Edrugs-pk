@@ -1,17 +1,39 @@
-import React, { useState } from 'react'
-import { Link, NavLink } from 'react-router-dom'
+import React, { useState, useRef, useEffect } from 'react'
+import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { Menu, X, Search, ShoppingCart, User, ChevronDown, LogOut } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import SearchComponent from './SearchComponent'
 import CategoryNav from './CategoryNav'
 import { useCart } from '../context/CartContext'
+import { useAuth } from '../context/AuthContext'
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [userOpen, setUserOpen] = useState(false)
-  const { items } = useCart()
-  const cartCount = items.length
-  const isAuthenticated = false
+  const { totalItems } = useCart()
+  const auth = useAuth()
+  const user = auth?.user ?? null
+  const signOut = auth?.signOut ?? (async () => {})
+  const navigate = useNavigate()
+
+  // Click-outside ref for dropdown
+  const dropdownRef = useRef(null)
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setUserOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
+  const handleLogout = async () => {
+    setUserOpen(false)
+    await signOut()
+    navigate('/login')
+  }
 
   return (
     <header className="sticky top-0 z-[120] bg-white border-b border-gray-100">
@@ -45,12 +67,12 @@ export default function Navbar() {
             >
               <ShoppingCart size={22} />
               <span className="absolute -top-0.5 -right-0.5 bg-teal-600 text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center">
-                {cartCount > 0 ? cartCount : '0'}
+                {totalItems > 0 ? totalItems : '0'}
               </span>
             </NavLink>
 
-            {/* User */}
-            <div className="relative">
+            {/* User Dropdown */}
+            <div className="relative" ref={dropdownRef}>
               <button
                 onClick={() => setUserOpen(v => !v)}
                 className="flex items-center gap-1 p-2 text-gray-700 hover:text-teal-700 transition-colors"
@@ -70,18 +92,21 @@ export default function Navbar() {
                     transition={{ duration: 0.15 }}
                     className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-xl shadow-lg py-2 z-20"
                   >
-                    {isAuthenticated ? (
+                    {user ? (
                       <>
-                        <Link to="/profile" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Profile</Link>
-                        <Link to="/dashboard" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">My Orders</Link>
-                        <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2">
+                        <Link to="/profile" onClick={() => setUserOpen(false)} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Profile</Link>
+                        <Link to="/dashboard" onClick={() => setUserOpen(false)} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">My Orders</Link>
+                        <button
+                          onClick={handleLogout}
+                          className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
+                        >
                           <LogOut size={14} /> Logout
                         </button>
                       </>
                     ) : (
                       <>
-                        <Link to="/login" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Sign In</Link>
-                        <Link to="/signup" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Create Account</Link>
+                        <Link to="/login" onClick={() => setUserOpen(false)} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Sign In</Link>
+                        <Link to="/signup" onClick={() => setUserOpen(false)} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Create Account</Link>
                       </>
                     )}
                   </motion.div>

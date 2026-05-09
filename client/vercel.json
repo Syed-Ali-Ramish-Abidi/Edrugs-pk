@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/rag/:path*",
+      "destination": "/api/rag"
+    }
+  ]
+}

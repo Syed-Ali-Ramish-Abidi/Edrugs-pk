@@ -3,10 +3,10 @@ import React, { createContext, useContext, useMemo, useState } from 'react'
 const CartContext = createContext(null)
 
 export function CartProvider({ children }) {
-  const [items, setItems] = useState([])
+  const [cart, setCart] = useState([])
 
-  function addItem(product, qty = 1) {
-    setItems((prev) => {
+  function addToCart(product, qty = 1) {
+    setCart((prev) => {
       const found = prev.find((p) => p.id === product.id)
       if (found) return prev.map((p) => (p.id === product.id ? { ...p, qty: p.qty + qty } : p))
       return [...prev, { ...product, qty }]
@@ -14,22 +14,23 @@ export function CartProvider({ children }) {
   }
 
   function removeItem(id) {
-    setItems((prev) => prev.filter((p) => p.id !== id))
+    setCart((prev) => prev.filter((p) => p.id !== id))
   }
 
   function updateQty(id, qty) {
-    setItems((prev) => prev.map((p) => (p.id === id ? { ...p, qty } : p)))
+    setCart((prev) => prev.map((p) => (p.id === id ? { ...p, qty } : p)))
   }
 
   function clearCart() {
-    setItems([])
+    setCart([])
   }
 
-  const subtotal = useMemo(() => items.reduce((s, it) => s + it.price * it.qty, 0), [items])
-  const hasPrescriptionItem = useMemo(() => items.some((it) => it.requiresPrescription), [items])
+  const totalAmount = useMemo(() => cart.reduce((s, it) => s + it.price * it.qty, 0), [cart])
+  const totalItems = useMemo(() => cart.reduce((s, it) => s + it.qty, 0), [cart])
+  const hasPrescriptionItem = useMemo(() => cart.some((it) => it.is_rx), [cart])
 
   return (
-    <CartContext.Provider value={{ items, addItem, removeItem, updateQty, clearCart, subtotal, hasPrescriptionItem }}>
+    <CartContext.Provider value={{ cart, addToCart, removeItem, updateQty, clearCart, totalAmount, totalItems, hasPrescriptionItem }}>
       {children}
     </CartContext.Provider>
   )

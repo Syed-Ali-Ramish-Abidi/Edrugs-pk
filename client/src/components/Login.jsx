@@ -1,26 +1,41 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, AlertCircle, Loader2 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
+import { supabase } from '../config/supabaseClient';
 
 const Login = () => {
     const navigate = useNavigate();
     const [showPassword, setShowPassword] = useState(false);
     const [formData, setFormData] = useState({ email: '', password: '' });
     const [errors, setErrors] = useState({});
+    const [authError, setAuthError] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
 
-    // Basic Validation Simulation
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
+        setAuthError(null);
         let newErrors = {};
         if (!formData.email.includes('@')) newErrors.email = "Please enter a valid email address.";
         if (formData.password.length < 6) newErrors.password = "Password must be at least 6 characters.";
         setErrors(newErrors);
 
         if (Object.keys(newErrors).length === 0) {
-            console.log("Login successful!", formData);
-            // Backend integration will go here
-            navigate('/profile');
+            setIsLoading(true);
+            try {
+                const { error } = await supabase.auth.signInWithPassword({
+                    email: formData.email,
+                    password: formData.password,
+                });
+
+                if (error) throw error;
+                
+                navigate('/profile');
+            } catch (err) {
+                setAuthError(err.message);
+            } finally {
+                setIsLoading(false);
+            }
         }
     };
 
@@ -36,6 +51,13 @@ const Login = () => {
                     <h2 className="text-3xl font-bold text-slate-800">Welcome Back</h2>
                     <p className="text-slate-600 mt-2">Sign in to your Edrugs.pk account</p>
                 </div>
+
+                {authError && (
+                    <div className="mb-4 bg-red-50 p-3 rounded-[10px] flex items-start gap-2 border border-red-200">
+                        <AlertCircle className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
+                        <span className="text-sm text-red-700">{authError}</span>
+                    </div>
+                )}
 
                 <form onSubmit={handleSubmit} className="space-y-6">
                     {/* Email Field */}
@@ -103,9 +125,17 @@ const Login = () => {
                     {/* Submit Button */}
                     <button
                         type="submit"
-                        className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-[10px] shadow-sm text-sm font-medium text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 transition-colors duration-200"
+                        disabled={isLoading}
+                        className="w-full flex justify-center items-center gap-2 py-2.5 px-4 border border-transparent rounded-[10px] shadow-sm text-sm font-medium text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 transition-colors duration-200 disabled:opacity-70 disabled:cursor-not-allowed"
                     >
-                        Sign in
+                        {isLoading ? (
+                            <>
+                                <Loader2 className="w-5 h-5 animate-spin" />
+                                Signing in...
+                            </>
+                        ) : (
+                            'Sign in'
+                        )}
                     </button>
                 </form>
 
